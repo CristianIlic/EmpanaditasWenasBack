@@ -20,7 +20,6 @@ const job = new cron.CronJob('*/1 * * * *', function () {
     res.on('end', () => {
       if (res.statusCode === 200) {
         console.log('Servidor reiniciado exitosamente');
-        console.log('Respuesta:', data);
       } else {
         console.error(`Error: Servidor respondió con código ${res.statusCode}`);
         console.error('Respuesta de error:', data);
