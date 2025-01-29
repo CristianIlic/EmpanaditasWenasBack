@@ -5,7 +5,7 @@ import 'dotenv/config'
 
 const backendUrl = process.env.API_URL;
 
-const job = new cron.CronJob('*/1 * * * *', function () {
+const job = new cron.CronJob('*/14 * * * *', function () {
   console.log('Reiniciando server');
 
   const httpModule = backendUrl?.startsWith('https') ? https : http;
