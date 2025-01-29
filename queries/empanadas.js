@@ -11,7 +11,8 @@ export const GET_ALL_EMPANADAS = `SELECT
             'ingredient_name', ei.ingredient,
             'quantity', ei.quantity,
             'unit', ei.unit,
-            'notes', ei.notes
+            'notes', ei.notes,
+            'for', ei.for
         )
     ) as ingredients,
     json_agg(
