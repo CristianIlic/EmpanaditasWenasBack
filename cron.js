@@ -1,23 +1,54 @@
 import cron from 'cron';
 import https from 'https';
+import http from 'http';
 import 'dotenv/config'
 
 const backendUrl = process.env.API_URL;
-const job = new cron.CronJob('*/14 * * * *', function () {
+
+const job = new cron.CronJob('*/1 * * * *', function () {
   console.log('Reiniciando server');
 
-  https.get(backendUrl, (res) => {
-    if (res.statusCode === 200) {
-      console.log('Servidor reiniciado');
-    } else {
-      console.error(
-        `falló reiniciar el servidor con el codigo: ${res.statusCode}`
-      );
-    }
-  })
-  .on('error', (err) => {
-    console.error('Error durante el reinicio:', err.message);
+  const httpModule = backendUrl?.startsWith('https') ? https : http;
+
+  const req = httpModule.get(backendUrl, (res) => {
+    let data = '';
+
+    res.on('data', chunk => {
+      data += chunk;
+    });
+
+    res.on('end', () => {
+      if (res.statusCode === 200) {
+        console.log('Servidor reiniciado exitosamente');
+        console.log('Respuesta:', data);
+      } else {
+        console.error(`Error: Servidor respondió con código ${res.statusCode}`);
+        console.error('Respuesta de error:', data);
+      }
+    });
   });
+
+  req.on('error', (err) => {
+    console.error('Error detallado durante el reinicio:', {
+      message: err.message,
+      code: err.code,
+      stack: err.stack,
+      url: backendUrl
+    });
+  });
+
+  req.setTimeout(10000, () => {
+    req.destroy();
+    console.error('Timeout: La petición tardó demasiado');
+  });
+
+  req.end();
 });
 
-export {job}; 
+job.addCallback(function(error) {
+  if (error) {
+    console.error('Error en la ejecución del CronJob:', error);
+  }
+});
+
+export {job};
