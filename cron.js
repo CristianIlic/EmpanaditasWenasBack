@@ -2,7 +2,7 @@ import cron from 'cron';
 import https from 'https';
 import 'dotenv/config'
 
-const backendUrl = process.env.DATABASE_URL;
+const backendUrl = process.env.API_URL;
 const job = new cron.CronJob('*/14 * * * *', function () {
   console.log('Reiniciando server');
 
