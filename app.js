@@ -3,11 +3,15 @@ import express from "express"
 import cors from "cors";
 import db from "./db/index.js"
 import { GET_ALL_EMPANADAS } from './queries/empanadas.js';
+import { job } from './cron.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
+
+job.start();
+
 app.listen(port, () => {
   console.log("Server Listening on PORT:", port);
 });
